@@ -13,11 +13,20 @@ import org.axonframework.eventhandling.AllowReplay
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.ResetHandler
 import org.axonframework.eventhandling.Timestamp
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.EnableRetry
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 
 @Component
+@EnableRetry
 @ProcessingGroup("accounts")
-class HolderAccountProjection(private val repository: AccountRepository) {
+class HolderAccountProjection {
+
+    // @EnableRetry 적용으로인해 생성자 주입이 정상적으로 이루어 지지 않고 있어 필드 주입을 하였음
+    @Autowired
+    lateinit var repository: AccountRepository
 
     companion object {
         private val log = KotlinLogging.logger {}
@@ -51,6 +60,8 @@ class HolderAccountProjection(private val repository: AccountRepository) {
     @EventHandler
     @AllowReplay
     // EventHandler 메서드 파라미터에는 Timestamp와 @SequenceNumber, ReplayStatus 등이 추가로 전달될 수 있다
+    @Retryable(value = [NoSuchElementException::class], maxAttempts = 5, backoff = Backoff(delay = 1000))
+    // NoSuchElementException 이 발생하면 1초 대기 후에 다시 시도하면 최대 5번 까지 재수행을 시도
     protected fun on(event: AccountCreationEvent, @Timestamp instant: Instant) {
         log.debug { "projecting $event , timestamp : $instant" }
         val holderAccount = getHolderAccountSummary(event.holderId).apply { accountCnt += 1 }

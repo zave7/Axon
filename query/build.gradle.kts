@@ -32,4 +32,7 @@ dependencies {
 
     // Logging
     implementation("io.github.microutils:kotlin-logging:1.12.5")
+
+    // Retry lib
+    implementation(group = "org.springframework.retry", name = "spring-retry")
 }
