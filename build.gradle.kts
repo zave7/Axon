@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     id("org.springframework.boot") version "2.5.6" //apply(false)
@@ -87,3 +88,5 @@ project(":query") {
 //    }
 }
 project(":common")
+project(":jejuBank")
+project(":seoulBank")

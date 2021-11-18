@@ -24,24 +24,10 @@ dependencies {
 
     /** axon framework **/
     implementation(group = "org.axonframework", name = "axon-spring-boot-starter", version = axonVersion)
-    implementation(group = "org.axonframework", name = "axon-configuration", version = axonVersion)
-
-    /** DB / ORM **/
-    implementation(group = "mysql", name = "mysql-connector-java")
-    implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-jpa")
-
-    /** Common module **/
-    implementation(project(":common"))
 
     /** Logging **/
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 
-    /** Retry lib **/
-    implementation(group = "org.springframework.retry", name = "spring-retry")
-
-    /** 화면 구현 **/
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-
-    /** Subscription Query 를 위한 리액터 **/
-    implementation(group = "io.projectreactor", name = "reactor-core")
+    /** Common module **/
+    implementation(project(":common"))
 }

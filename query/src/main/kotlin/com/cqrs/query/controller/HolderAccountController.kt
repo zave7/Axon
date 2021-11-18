@@ -1,5 +1,6 @@
 package com.cqrs.query.controller
 
+import com.cqrs.common.query.loan.LoanLimitResult
 import com.cqrs.query.entities.HolderAccountSummaryEntity
 import com.cqrs.query.service.QueryService
 import javax.validation.constraints.NotBlank
@@ -33,4 +34,11 @@ class HolderAccountController(private val queryService: QueryService) {
         return ResponseEntity.ok()
             .body(queryService.getAccountInfoSubscription(holderId))
     }
+
+    @GetMapping("/account/info/scatter/gather/{id}")
+    fun getAccountInfoScatterGather(@PathVariable(value = "id") @NonNull @NotBlank holderId: String) : ResponseEntity<List<LoanLimitResult>> {
+        return ResponseEntity.ok()
+            .body(queryService.getAccountInfoScatterGather(holderId))
+    }
+
 }

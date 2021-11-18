@@ -15,4 +15,9 @@ class WebController {
     fun subscriptionQueryView() {
 
     }
+
+    @GetMapping("/scatter-gather")
+    fun scatterGatherQueryView() {
+
+    }
 }

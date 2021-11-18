@@ -1,0 +1,42 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: eventsourcing-cqrs-seoulBank
+
+# Axon Framework 설정
+axon:
+  serializer:
+    general: xstream
+  axonserver:
+    servers: 127.0.0.1:8124
+
+# logging
+logging:
+  level:
+    com:
+      cqrs:
+        query: debug
+    org:
+      axonframework: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod

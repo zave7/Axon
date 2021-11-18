@@ -1,7 +1,14 @@
 package com.cqrs.query.service
 
+import com.cqrs.common.query.loan.LoanLimitQuery
+import com.cqrs.common.query.loan.LoanLimitResult
 import com.cqrs.query.entities.HolderAccountSummaryEntity
 import com.cqrs.query.query.AccountQuery
+import com.cqrs.query.repositories.AccountRepository
+import java.util.Collections
+import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
+import kotlin.streams.toList
 import mu.KotlinLogging
 import org.axonframework.config.Configuration
 import org.axonframework.eventhandling.TrackingEventProcessor
@@ -14,7 +21,8 @@ import reactor.core.publisher.Flux
 @Service
 class QueryServiceImpl(
     private val configuration: Configuration,
-    private val queryGateway: QueryGateway
+    private val queryGateway: QueryGateway,
+    private val repository: AccountRepository
 ) : QueryService{
 
     companion object {
@@ -63,6 +71,21 @@ class QueryServiceImpl(
                 .doOnComplete(emitter::complete)
                 .subscribe(emitter::next)
         }
+    }
+
+    override fun getAccountInfoScatterGather(holderId: String): List<LoanLimitResult> {
+        val accountSummaryEntity = repository.findByHolderId(holderId) ?: throw NoSuchElementException("소유주가 없습니다.")
+
+        // Scatter-Gather 쿼리는 단일 App 에 요청하는 것이 아니므로, 만약 Handler 처리 App 에 장애가 발생한다면
+        // 무한정 대기할 수 있으므로 DeadLine 을 정하여 요청시간 만큼만 대기
+        return queryGateway.scatterGather(
+            LoanLimitQuery(
+                holderId = accountSummaryEntity.holderId
+                , balance = accountSummaryEntity.totalBalance
+            )
+            , ResponseTypes.instanceOf(LoanLimitResult::class.java)
+            , 30, TimeUnit.SECONDS)
+            .toList()
     }
 
 }

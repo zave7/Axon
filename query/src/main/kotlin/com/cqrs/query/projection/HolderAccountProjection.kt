@@ -38,6 +38,7 @@ class HolderAccountProjection {
     }
 
     @QueryHandler
+    // Query Gateway 를 통한 요청 핸들링
     fun on(query: AccountQuery) : HolderAccountSummaryEntity? {
         log.debug { "handling $query" }
         return repository.findByHolderId(query.holderId)
