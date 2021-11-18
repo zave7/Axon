@@ -1,0 +1,56 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: eventsourcing-cqrs-command
+
+# DB connection
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/Command?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: command
+    password: axon
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none
+      format_sql: true
+    open-in-view: false
+
+# Axon Framework 설정
+axon:
+  serializer:
+    general: xstream
+  axonserver:
+    servers: 127.0.0.1:8124
+  eventhandling:
+    processors:
+      name:
+        mode: tracking
+
+# logging
+logging:
+  level:
+    com:
+      cqrs:
+        command: debug
+    org:
+      axonframework: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod

@@ -1,0 +1,41 @@
+POST http://localhost:8081/holder
+Content-Type: application/json
+
+{
+  "holderName" : "zave",
+  "tel" : "02-1234-5678",
+  "address" : "서울시 강남구"
+}
+
+###
+
+POST http://localhost:8081/account
+Content-Type: application/json
+
+{
+  "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7"
+}
+
+####
+
+POST http://localhost:8081/deposit
+Content-Type: application/json
+
+{
+  "accountId" : "b9c33de6-2651-4c4d-8bcd-54a25fe34e00",
+  "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7",
+  "amount" : 300
+}
+
+####
+
+POST http://localhost:8081/withdrawal
+Content-Type: application/json
+
+{
+  "accountId" : "b9c33de6-2651-4c4d-8bcd-54a25fe34e00",
+  "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7",
+  "amount" : 10
+}
+
+###
