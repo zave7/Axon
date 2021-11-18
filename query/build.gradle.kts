@@ -13,26 +13,34 @@ dependencies {
 
 //    implementation(group = "", name = "", version = "")
 
+    /** springboot **/
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    // axon framework
+    /** axon framework **/
     implementation(group = "org.axonframework", name = "axon-spring-boot-starter", version = axonVersion)
     implementation(group = "org.axonframework", name = "axon-configuration", version = axonVersion)
 
-    // DB / ORM
+    /** DB / ORM **/
     implementation(group = "mysql", name = "mysql-connector-java")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-jpa")
 
-    // Common module
+    /** Common module **/
     implementation(project(":common"))
 
-    // Logging
+    /** Logging **/
     implementation("io.github.microutils:kotlin-logging:1.12.5")
 
-    // Retry lib
+    /** Retry lib **/
     implementation(group = "org.springframework.retry", name = "spring-retry")
+
+    /** 화면 구현 **/
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+    /** Subscription Query 를 위한 리액터 **/
+    implementation(group = "io.projectreactor", name = "reactor-core")
 }

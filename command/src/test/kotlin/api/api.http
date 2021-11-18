@@ -36,7 +36,7 @@ Content-Type: application/json
 {
   "accountId" : "b9c33de6-2651-4c4d-8bcd-54a25fe34e00",
   "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7",
-  "amount" : 10
+  "amount" : 5
 }
 
 ###

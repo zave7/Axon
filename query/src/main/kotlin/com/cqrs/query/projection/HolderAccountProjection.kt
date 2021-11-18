@@ -5,6 +5,7 @@ import com.cqrs.common.events.DepositMoneyEvent
 import com.cqrs.common.events.HolderCreationEvent
 import com.cqrs.common.events.WithdrawMoneyEvent
 import com.cqrs.query.entities.HolderAccountSummaryEntity
+import com.cqrs.query.query.AccountQuery
 import com.cqrs.query.repositories.AccountRepository
 import java.time.Instant
 import mu.KotlinLogging
@@ -13,6 +14,8 @@ import org.axonframework.eventhandling.AllowReplay
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.ResetHandler
 import org.axonframework.eventhandling.Timestamp
+import org.axonframework.queryhandling.QueryHandler
+import org.axonframework.queryhandling.QueryUpdateEmitter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.EnableRetry
@@ -27,9 +30,17 @@ class HolderAccountProjection {
     // @EnableRetry 적용으로인해 생성자 주입이 정상적으로 이루어 지지 않고 있어 필드 주입을 하였음
     @Autowired
     lateinit var repository: AccountRepository
+    @Autowired
+    lateinit var queryUpdateEmitter: QueryUpdateEmitter
 
     companion object {
         private val log = KotlinLogging.logger {}
+    }
+
+    @QueryHandler
+    fun on(query: AccountQuery) : HolderAccountSummaryEntity? {
+        log.debug { "handling $query" }
+        return repository.findByHolderId(query.holderId)
     }
 
     @ResetHandler
@@ -61,7 +72,7 @@ class HolderAccountProjection {
     @AllowReplay
     // EventHandler 메서드 파라미터에는 Timestamp와 @SequenceNumber, ReplayStatus 등이 추가로 전달될 수 있다
     @Retryable(value = [NoSuchElementException::class], maxAttempts = 5, backoff = Backoff(delay = 1000))
-    // NoSuchElementException 이 발생하면 1초 대기 후에 다시 시도하면 최대 5번 까지 재수행을 시도
+    // NoSuchElementException 이 발생하면 1초 대기 후에 다시 시도하면 최대 5번 까지 재수행 시도
     protected fun on(event: AccountCreationEvent, @Timestamp instant: Instant) {
         log.debug { "projecting $event , timestamp : $instant" }
         val holderAccount = getHolderAccountSummary(event.holderId).apply { accountCnt += 1 }
@@ -73,6 +84,12 @@ class HolderAccountProjection {
     protected fun on(event: DepositMoneyEvent, @Timestamp instant: Instant) {
         log.debug { "projecting $event , timestamp : $instant" }
         val holderAccount = getHolderAccountSummary(event.holderId).apply { totalBalance += event.amount }
+
+        queryUpdateEmitter.emit(
+            AccountQuery::class.java
+            , { query -> query.holderId == event.holderId }
+            , holderAccount)
+
         repository.save(holderAccount)
     }
 
@@ -81,6 +98,12 @@ class HolderAccountProjection {
     protected fun on(event: WithdrawMoneyEvent, @Timestamp instant: Instant) {
         log.debug { "projecting $event , timestamp : $instant" }
         val holderAccount = getHolderAccountSummary(event.holderId).apply { totalBalance -= event.amount }
+
+        queryUpdateEmitter.emit(
+            AccountQuery::class.java
+            , { query -> query.holderId == event.holderId }
+            , holderAccount)
+
         repository.save(holderAccount)
     }
 
