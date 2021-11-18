@@ -4,7 +4,8 @@ Content-Type: application/json
 {
   "holderName" : "zave",
   "tel" : "02-1234-5678",
-  "address" : "서울시 강남구"
+  "address" : "서울시 강남구",
+  "company" : "VNTG"
 }
 
 ###
@@ -13,7 +14,7 @@ POST http://localhost:8081/account
 Content-Type: application/json
 
 {
-  "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7"
+  "holderId" : "d917749f-60a1-4942-a622-081de72a69b0"
 }
 
 ####
@@ -22,8 +23,8 @@ POST http://localhost:8081/deposit
 Content-Type: application/json
 
 {
-  "accountId" : "b9c33de6-2651-4c4d-8bcd-54a25fe34e00",
-  "holderId" : "e661d1b0-b4b8-4145-92c5-288f52db2db7",
+  "accountId" : "72a7781b-a2f7-46df-ab65-240a06c2c123",
+  "holderId" : "d917749f-60a1-4942-a622-081de72a69b0",
   "amount" : 300
 }
 

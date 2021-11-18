@@ -19,17 +19,20 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    // axon framework
+    /** axon framework **/
+    // core
     implementation(group = "org.axonframework", name = "axon-spring-boot-starter", version = axonVersion)
     implementation(group = "org.axonframework", name = "axon-configuration", version = axonVersion)
+    // message
+    implementation(group = "org.axonframework", name = "axon-messaging", version = axonVersion)
 
-    // DB / ORM
+    /** DB / ORM **/
     implementation(group = "mysql", name = "mysql-connector-java")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-jpa")
 
-    // Common module
+    /** Common module **/
     implementation(project(":common"))
 
-    // Logging
+    /** Logging **/
     implementation("io.github.microutils:kotlin-logging:1.12.5")
 }

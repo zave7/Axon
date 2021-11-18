@@ -1,9 +1,12 @@
 package com.cqrs.query.config
 
+import com.cqrs.query.version.HolderCreationEventV1
 import org.axonframework.config.EventProcessingConfigurer
 import org.axonframework.eventhandling.TrackingEventProcessorConfiguration
 import org.axonframework.eventhandling.async.SequentialPerAggregatePolicy
+import org.axonframework.serialization.upcasting.event.EventUpcasterChain
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
@@ -28,5 +31,12 @@ class AxonConfig {
 
         configurer.registerSequencingPolicy("accounts")
         { SequentialPerAggregatePolicy.instance() }
+    }
+
+    @Bean
+    // 만약 Event의 버전이 여러개 생성되었다면, HolderCreationEventV1 이외 여러개의
+    // 여러개의 버전간 핸들러 클래스를 생성한 다음 Event Chain 생성 로직에 핸들러 인스턴스를 등록한다.
+    fun eventUpcasterChain() : EventUpcasterChain{
+        return EventUpcasterChain(HolderCreationEventV1())
     }
 }

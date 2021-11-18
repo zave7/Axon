@@ -23,6 +23,7 @@ class TransactionServiceImpl(private val commandGateway: CommandGateway) : Trans
                 , holderName = holderDTO.holderName
                 , tel = holderDTO.tel
                 , address = holderDTO.address
+                , company = holderDTO.company
             )
         )
     }

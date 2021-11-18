@@ -7,5 +7,6 @@ data class HolderCreationCommand(
     var holderId: String,
     var holderName: String,
     var tel: String,
-    var address: String
+    var address: String,
+    var company: String
 )

@@ -35,7 +35,8 @@ class HolderAggregate() {
                 holderId = command.holderId,
                 holderName = command.holderName,
                 tel = command.tel,
-                address = command.address
+                address = command.address,
+                company = command.company
             )
         )
     }
