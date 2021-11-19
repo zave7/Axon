@@ -2,10 +2,14 @@ package com.cqrs.command.aggreate
 
 import com.cqrs.command.commands.AccountCreationCommand
 import com.cqrs.command.commands.DepositMoneyCommand
+import com.cqrs.command.commands.MoneyTransferCommand
+import com.cqrs.command.commands.TransferApprovedCommand
 import com.cqrs.command.commands.WithdrawMoneyCommand
+import com.cqrs.command.event.DepositCompletedEvent
 import com.cqrs.common.events.AccountCreationEvent
 import com.cqrs.common.events.DepositMoneyEvent
 import com.cqrs.common.events.WithdrawMoneyEvent
+import com.cqrs.common.events.transfer.MoneyTransferEvent
 import mu.KotlinLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
@@ -92,5 +96,39 @@ class AccountAggregate() {
         log.debug { "log applying $event" }
         this.balance -= event.amount
         log.debug { "log balance ${this.balance}" }
+    }
+
+    @CommandHandler
+    protected fun transferMoney(command: MoneyTransferCommand) {
+        log.debug { "handling  $command" }
+        this.accountId = command.srcAccountId
+        AggregateLifecycle.apply(
+            MoneyTransferEvent(
+                srcAccountId = command.srcAccountId
+                , dstAccountId = command.dstAccountId
+                , amount = command.amount
+                , commandFactory = command.bankType.getCommandFactory(command)
+                , transferId = command.transferId
+            )
+        )
+    }
+
+    @CommandHandler
+    protected fun transferMoney(command: TransferApprovedCommand) {
+        log.debug { "handling $command" }
+        this.accountId = command.accountId
+        AggregateLifecycle.apply(
+            DepositMoneyEvent(
+                holderId = this.holderId
+                , accountId = command.accountId
+                , amount = command.amount
+            )
+        )
+        AggregateLifecycle.apply(
+            DepositCompletedEvent(
+                accountId = command.accountId
+                , transferId = command.transferId
+            )
+        )
     }
 }

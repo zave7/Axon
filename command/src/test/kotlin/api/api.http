@@ -14,7 +14,7 @@ POST http://localhost:8081/account
 Content-Type: application/json
 
 {
-  "holderId" : "d917749f-60a1-4942-a622-081de72a69b0"
+  "holderId" : "e2cfe477-7bf2-4e96-9b3e-58294d34b4fb"
 }
 
 ####
@@ -40,3 +40,13 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:8081/transfer
+Content-Type: application/json
+
+{
+  "srcAccountId" : "test",
+  "dstAccountId" : "63e289da-cd5e-418d-919c-62469984617c",
+  "amount" : 30,
+  "bankType" : "JEJU"
+}

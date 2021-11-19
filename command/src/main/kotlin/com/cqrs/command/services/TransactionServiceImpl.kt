@@ -3,18 +3,27 @@ package com.cqrs.command.services
 import com.cqrs.command.commands.AccountCreationCommand
 import com.cqrs.command.commands.DepositMoneyCommand
 import com.cqrs.command.commands.HolderCreationCommand
+import com.cqrs.command.commands.MoneyTransferCommand
 import com.cqrs.command.commands.WithdrawMoneyCommand
 import com.cqrs.command.dto.AccountDTO
 import com.cqrs.command.dto.DepositDTO
 import com.cqrs.command.dto.HolderDTO
+import com.cqrs.command.dto.TransferDTO
 import com.cqrs.command.dto.WithdrawalDTO
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import kotlin.math.log
+import mu.KotlinLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 
 @Service
 class TransactionServiceImpl(private val commandGateway: CommandGateway) : TransactionService {
+
+    companion object {
+        private val log = KotlinLogging.logger {}
+    }
 
     override fun createHolder(holderDTO: HolderDTO): CompletableFuture<String> {
         return commandGateway.send(
@@ -55,5 +64,14 @@ class TransactionServiceImpl(private val commandGateway: CommandGateway) : Trans
                 , amount = transactionDTO.amount
             )
         )
+    }
+
+    override fun transferMoney(transferDTO: TransferDTO): String {
+        log.debug { "transferMoney transferDTO : $transferDTO" }
+        val moneyTransferCommand = MoneyTransferCommand.of(transferDTO)
+        log.debug { "moneyTransferCommand : $moneyTransferCommand" }
+        val result = commandGateway.sendAndWait<String>(moneyTransferCommand)
+        log.debug { "transferMoney result : $result" }
+        return result ?: "empty" // sendAndWait 에서 null 이 반환되는 원인을 파악하지 못함
     }
 }

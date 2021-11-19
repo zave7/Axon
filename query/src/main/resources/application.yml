@@ -15,7 +15,7 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect # mysql 8.0 이후 접속 시 allowPublicKeyRetrieval=true DB 설정이 필요하다
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
       format_sql: true
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl

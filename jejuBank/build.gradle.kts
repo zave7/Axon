@@ -22,6 +22,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    /** DB / ORM **/
+    implementation(group = "mysql", name = "mysql-connector-java")
+    implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-jpa")
+
     /** axon framework **/
     implementation(group = "org.axonframework", name = "axon-spring-boot-starter", version = axonVersion)
 

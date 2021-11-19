@@ -30,13 +30,15 @@ class AxonConfig {
     /* AxonServer 와 연결시 기본적으로 CommandBus로써 AxonServerCommandBus를 사용한다.
      * 이를 개선하기 위해서 Command 처리시 AxonServer 연결없이 명령을 처리하도록 변경이 필요하다.
      * AxonFramework에서는 SimpleCommandBus 클래스를 제공하며, 설정을 통해 CommandBus 인터페이스 교체가 가능하다.
+     *
+     * 하지만 다른 모듈에 대하여 Command 요청이 필요할 경우 SimpleCommandBus 설정을 해제해야 한다.
      */
-    @Bean
+    /*@Bean
     fun commandBus(transactionManager: TransactionManager) : SimpleCommandBus {
         return SimpleCommandBus.builder()
             .transactionManager(transactionManager)
             .build()
-    }
+    }*/
 
     /** 이하 설정은 성능 개선을 위해 일정 주기별로 Aggregate에 대한 Snapshot 을 생성한다 **/
     /**

@@ -1,0 +1,7 @@
+POST localhost:9092/account
+Content-Type: application/json
+
+{
+  "accountId" : "test",
+  "balance" : 100
+}
