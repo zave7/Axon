@@ -2,6 +2,6 @@ POST localhost:9092/account
 Content-Type: application/json
 
 {
-  "accountId" : "test",
+  "accountId" : "test5",
   "balance" : 100
 }

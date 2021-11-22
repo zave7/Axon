@@ -13,6 +13,7 @@ import com.cqrs.common.events.transfer.MoneyTransferEvent
 import mu.KotlinLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
+import org.axonframework.extensions.kotlin.applyEvent
 import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.spring.stereotype.Aggregate
@@ -102,6 +103,7 @@ class AccountAggregate() {
     protected fun transferMoney(command: MoneyTransferCommand) {
         log.debug { "handling  $command" }
         this.accountId = command.srcAccountId
+
         AggregateLifecycle.apply(
             MoneyTransferEvent(
                 srcAccountId = command.srcAccountId

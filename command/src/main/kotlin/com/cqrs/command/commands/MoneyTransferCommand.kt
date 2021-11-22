@@ -3,7 +3,11 @@ package com.cqrs.command.commands
 import com.cqrs.command.dto.TransferDTO
 import com.cqrs.common.command.transfer.factory.TransferCommandFactory
 import com.cqrs.common.command.transfer.JejuBankTransferCommand
+import com.cqrs.common.command.transfer.JejuBankCompensationCancelCommand
+import com.cqrs.common.command.transfer.JejuBankCancelTransferCommand
 import com.cqrs.common.command.transfer.SeoulBankTransferCommand
+import com.cqrs.common.command.transfer.SeoulBankCompensationCancelCommand
+import com.cqrs.common.command.transfer.SeoulBankCancelTransferCommand
 import java.util.UUID
 import java.util.function.Function
 import org.axonframework.modelling.command.TargetAggregateIdentifier
@@ -23,8 +27,8 @@ data class MoneyTransferCommand(
      */
     enum class BankType(val expression: Function<MoneyTransferCommand, TransferCommandFactory>) {
 
-        JEJU({ TransferCommandFactory(JejuBankTransferCommand()) }),
-        SEOUL({ TransferCommandFactory(SeoulBankTransferCommand()) });
+        JEJU({ TransferCommandFactory(JejuBankTransferCommand(), JejuBankCancelTransferCommand(), JejuBankCompensationCancelCommand()) }),
+        SEOUL({ TransferCommandFactory(SeoulBankTransferCommand(), SeoulBankCancelTransferCommand(), SeoulBankCompensationCancelCommand()) });
 
         fun getCommandFactory(command: MoneyTransferCommand) : TransferCommandFactory {
             return this.expression.apply(command).apply {

@@ -2,11 +2,18 @@ package com.cqrs.command.saga
 
 import com.cqrs.command.commands.TransferApprovedCommand
 import com.cqrs.command.event.DepositCompletedEvent
+import com.cqrs.common.command.transfer.AbstractCancelTransferCommand
+import com.cqrs.common.command.transfer.AbstractCompensationCancelCommand
 import com.cqrs.common.command.transfer.AbstractTransferCommand
 import com.cqrs.common.command.transfer.factory.TransferCommandFactory
+import com.cqrs.common.events.transfer.CompletedCancelTransferEvent
+import com.cqrs.common.events.transfer.CompletedCompensationCancelEvent
 import com.cqrs.common.events.transfer.MoneyTransferEvent
 import com.cqrs.common.events.transfer.TransferApprovedEvent
+import com.cqrs.common.events.transfer.TransferDeniedEvent
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
+import org.axonframework.commandhandling.CommandExecutionException
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.axonframework.modelling.saga.EndSaga
 import org.axonframework.modelling.saga.SagaEventHandler
@@ -22,6 +29,8 @@ class TransferManager {
     @Transient
     private lateinit var commandGateway: CommandGateway
     private lateinit var commandFactory: TransferCommandFactory
+    private var isExecutingCompensation = false
+    private var isAbortingCompensation = false
 
     companion object {
         private val log = KotlinLogging.logger {}
@@ -39,8 +48,48 @@ class TransferManager {
         log.debug { "event : $event" }
         this.commandFactory = event.commandFactory
         SagaLifecycle.associateWith("srcAccountId", event.srcAccountId)
-        log.info { "계좌 이체 시작 : $event" }
-        commandGateway.send<AbstractTransferCommand>(commandFactory.getTransferCommand())
+        try{
+            log.info { "계좌 이체 시작 : $event" }
+            commandGateway.sendAndWait<AbstractTransferCommand>(commandFactory.transferCommand, 5, TimeUnit.SECONDS)
+        } catch (e: CommandExecutionException) {
+            log.error { "Failed transfer process. Start cancel transaction" }
+            cancelTransfer()
+        }
+    }
+
+    private fun cancelTransfer() {
+        isExecutingCompensation = true
+        log.info { "보상 트랜잭션 요청" }
+        commandGateway.send<AbstractCancelTransferCommand>(commandFactory.abortTransferCommand)
+    }
+
+    @SagaEventHandler(associationProperty = "srcAccountId")
+    protected fun on(event: CompletedCancelTransferEvent) {
+        isExecutingCompensation = false
+        if(!isAbortingCompensation) {
+            log.info { "계좌 이체 취소 완료 : $event" }
+            SagaLifecycle.end()
+        }
+    }
+
+    @SagaEventHandler(associationProperty = "srcAccountId")
+    protected fun on(event: TransferDeniedEvent) {
+        log.info { "계좌 이체 실패 : $event" }
+        log.info { "실패 사유 : ${event.description}" }
+        if(isExecutingCompensation) {
+            isAbortingCompensation = true
+            log.info { "보상 트랜잭션 취소 요청 : $event" }
+            commandGateway.send<AbstractCompensationCancelCommand>(commandFactory.compensationAbortCommand)
+        } else {
+            SagaLifecycle.end()
+        }
+    }
+
+    @SagaEventHandler(associationProperty = "srcAccountId")
+    @EndSaga
+    protected fun on(event: CompletedCompensationCancelEvent) {
+        isAbortingCompensation = false
+        log.info { "보상 트랜잭션 취소 완료 : $event" }
     }
 
     @SagaEventHandler(associationProperty = "srcAccountId")

@@ -8,6 +8,7 @@ plugins {
 }
 
 val axonVersion = "4.4.9"
+val axonKotlinVersion = "0.2.0"
 
 dependencies {
 
@@ -25,6 +26,8 @@ dependencies {
     implementation(group = "org.axonframework", name = "axon-configuration", version = axonVersion)
     // message
     implementation(group = "org.axonframework", name = "axon-messaging", version = axonVersion)
+    // kotlin axon extension
+    implementation(group = "org.axonframework.extensions.kotlin", name = "axon-kotlin", version = axonKotlinVersion)
 
     /** DB / ORM **/
     implementation(group = "mysql", name = "mysql-connector-java")

@@ -2,7 +2,7 @@ POST http://localhost:8081/holder
 Content-Type: application/json
 
 {
-  "holderName" : "zave",
+  "holderName" : "test5",
   "tel" : "02-1234-5678",
   "address" : "서울시 강남구",
   "company" : "VNTG"
@@ -14,7 +14,7 @@ POST http://localhost:8081/account
 Content-Type: application/json
 
 {
-  "holderId" : "e2cfe477-7bf2-4e96-9b3e-58294d34b4fb"
+  "holderId" : "f84eb8d3-9d6e-4809-8acc-feafe62f6c6a"
 }
 
 ####
@@ -45,8 +45,8 @@ POST http://localhost:8081/transfer
 Content-Type: application/json
 
 {
-  "srcAccountId" : "test",
-  "dstAccountId" : "63e289da-cd5e-418d-919c-62469984617c",
+  "srcAccountId" : "test5",
+  "dstAccountId" : "e34c0ef6-f4fe-4807-b5e7-f4022e0e0d65",
   "amount" : 30,
   "bankType" : "JEJU"
 }

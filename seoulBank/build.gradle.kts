@@ -9,6 +9,7 @@ plugins {
 
 val axonVersion = "4.4.9"
 val kotlinLoggingVersion = "1.12.5"
+val axonKotlinVersion = "0.2.0"
 
 dependencies {
 
@@ -24,6 +25,8 @@ dependencies {
 
     /** axon framework **/
     implementation(group = "org.axonframework", name = "axon-spring-boot-starter", version = axonVersion)
+    // kotlin axon extension
+    implementation(group = "org.axonframework.extensions.kotlin", name = "axon-kotlin", version = axonKotlinVersion)
 
     /** Logging **/
     implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
